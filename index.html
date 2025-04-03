@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kirana Store Manager</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!-- Load OpenCV.js first -->
+    <script async src="https://docs.opencv.org/4.8.0/opencv.js" onload="onOpenCVLoad()"></script>
+    <!-- Load ZXing -->
+    <script src="https://unpkg.com/@zxing/library@0.19.1/umd/index.min.js"></script>
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <!-- Check for browser compatibility -->
+    <script>
+        // Check if the browser supports the required APIs
+        window.isBrowserCompatible = function() {
+            const hasMediaDevices = !!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia);
+            const hasZXing = typeof window.ZXing !== 'undefined';
+            console.log('Browser compatibility check:', {
+                hasMediaDevices,
+                hasZXing,
+                ZXing: window.ZXing
+            });
+            return hasMediaDevices && hasZXing;
+        };
+
+        // Add error handling for script loading
+        window.addEventListener('error', function(e) {
+            console.error('Script error:', e);
+        });
+
+        // Wait for ZXing to load
+        window.addEventListener('load', function() {
+            if (typeof window.ZXing === 'undefined') {
+                console.error('ZXing failed to load');
+            } else {
+                console.log('ZXing loaded successfully');
+            }
+        });
+
+        function onOpenCVLoad() {
+            console.log('OpenCV.js loaded successfully');
+        }
+    </script>
+</head>
+<body>
+    <!-- Auth Section -->
+    <div id="auth-container"></div>
+
+    <!-- Main App Section -->
+    <section id="app-section" class="page">
+        <!-- Sidebar -->
+        <nav class="sidebar">
+            <div class="logo">
+                <h3>Kirana Store</h3>
+            </div>
+            <div class="nav-links">
+                <button onclick="showPage('inventory')" class="nav-btn">
+                    <span class="material-icons">inventory</span>
+                    Inventory
+                </button>
+                <button onclick="showPage('scanner')" class="nav-btn">
+                    <span class="material-icons">qr_code_scanner</span>
+                    Scan Items
+                </button>
+                <button onclick="showPage('chatbot')" class="nav-btn">
+                    <span class="material-icons">chat</span>
+                    Assistant
+                </button>
+                <button onclick="showPage('notifications')" class="nav-btn">
+                    <span class="material-icons">notifications</span>
+                    Notifications
+                </button>
+            </div>
+            <button onclick="logout()" class="logout-btn">
+                <span class="material-icons">logout</span>
+                Logout
+            </button>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div id="page-container">
+                <!-- Scanner Page -->
+                <div id="scanner-page" class="scanner-container">
+                    <h2>Barcode Scanner</h2>
+                    
+                    <!-- Camera View -->
+                    <div class="camera-view">
+                        <div id="camera-placeholder" class="camera-placeholder">
+                            <span class="material-icons">videocam_off</span>
+                            <p>Camera feed will appear here</p>
+                        </div>
+                        <video id="camera-feed" autoplay playsinline style="display: none;"></video>
+                        <canvas id="barcode-canvas"></canvas>
+                    </div>
+
+                    <!-- Scanner Controls -->
+                    <div class="scanner-controls">
+                        <button id="start-camera" class="control-btn">
+                            <span class="material-icons">videocam</span>
+                            Start Camera
+                        </button>
+                        <button id="capture-image" class="control-btn" style="display: none;">
+                            <span class="material-icons">camera</span>
+                            Capture Image
+                        </button>
+                    </div>
+
+                    <!-- Upload Section -->
+                    <div class="upload-section">
+                        <p>Or upload a barcode image:</p>
+                        <input type="file" id="barcode-upload" accept="image/*" />
+                        <button id="process-upload" class="control-btn">
+                            <span class="material-icons">upload</span>
+                            Process Image
+                        </button>
+                    </div>
+
+                    <!-- Results Section -->
+                    <div id="scan-result" class="scan-result" style="display: none;">
+                        <h3>Scan Results</h3>
+                        <div id="upc-result"></div>
+                        <div id="item-details"></div>
+                        <button id="add-to-inventory" class="control-btn">
+                            <span class="material-icons">add_box</span>
+                            Add to Inventory
+                        </button>
+                    </div>
+
+                    <!-- Error and Loading States -->
+                    <div id="scan-error" class="scan-error" style="display: none;">
+                        Unable to detect barcode. Please try again.
+                    </div>
+                    <div id="scan-loading" class="scan-loading" style="display: none;">
+                        <span class="material-icons spinning">refresh</span>
+                        Processing...
+                    </div>
+                </div>
+            </div>
+        </main>
+    </section>
+
+    <script src="script.js"></script>
+    <script src="app.js"></script>
+    <script src="scanner.js"></script>
+</body>
+</html>

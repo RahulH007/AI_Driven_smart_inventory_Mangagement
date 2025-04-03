@@ -1,0 +1,60 @@
+<!-- Scanner Page -->
+<div id="scanner-page" class="content-page">
+    <h2>Scan Items</h2>
+    <div class="scanner-container">
+        <div id="browser-compatibility-warning" style="display: none;">
+            <div class="alert alert-warning">
+                <p>Your browser doesn't support camera access. Please use a modern browser like Chrome, Firefox, or Edge.</p>
+                <p>You can still upload barcode images manually.</p>
+            </div>
+        </div>
+        
+        <div class="camera-view">
+            <video id="camera-feed" autoplay playsinline></video>
+            <canvas id="barcode-canvas" style="display: none;"></canvas>
+            <div id="camera-placeholder" class="camera-placeholder">
+                <span class="material-icons">camera_alt</span>
+                <p>Camera will appear here</p>
+            </div>
+        </div>
+        
+        <div class="scanner-controls">
+            <button id="start-camera" class="primary-btn">Start Camera</button>
+            <button id="capture-image" class="primary-btn" style="display: none;">Capture Image</button>
+            <div class="upload-section">
+                <p>Or upload a barcode image</p>
+                <div class="file-upload-container">
+                    <input type="file" id="barcode-upload" accept="image/*">
+                    <button id="process-upload" class="secondary-btn">Process Image</button>
+                </div>
+            </div>
+        </div>
+        
+        <div id="scan-result" class="scan-result" style="display: none;">
+            <h3>Scan Result</h3>
+            <div id="upc-result"></div>
+            <div id="item-details"></div>
+            <button id="add-to-inventory" class="primary-btn">Add to Inventory</button>
+        </div>
+        
+        <div id="scan-error" class="scan-error" style="display: none;">
+            <p>Unable to detect barcode. Please try again.</p>
+        </div>
+        
+        <div id="scan-loading" class="scan-loading" style="display: none;">
+            <div class="loading-spinner"></div>
+            <p>Processing image...</p>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Check browser compatibility when the page loads
+    document.addEventListener('DOMContentLoaded', function() {
+        if (!window.isBrowserCompatible()) {
+            document.getElementById('browser-compatibility-warning').style.display = 'block';
+            document.getElementById('start-camera').disabled = true;
+            document.getElementById('start-camera').textContent = 'Camera Not Available';
+        }
+    });
+</script> 
